@@ -919,6 +919,9 @@ static struct {
 	/* http://sourceforge.net/p/gphoto/feature-requests/456/ */
 	{"Sony:Alpha-A7S (Control)",  0x054c, 0x0954, PTP_CAP},
 
+	/* titan232@gmail.com */
+	{"Sony:ILCE-7M2 (Control)",  0x054c, 0x0a6a, PTP_CAP},
+
 	/* Andre Crone, andre@elysia.nl */
 	{"Sony:Alpha-A7r II (Control)",  0x054c, 0x0a6b, PTP_CAP},
 
@@ -1331,11 +1334,16 @@ static struct {
 	{"Olympus:X920",                  0x07b4, 0x0116, 0},
 	{"Olympus:X925",                  0x07b4, 0x0116, 0},
 
+	/* Jonas Rani Hatem <jr@hatem.be> */
+	{"Olympus:TG-620",                0x07b4, 0x0125, 0},
+
 	/* t.ludewig@gmail.com */
 	{"Olympus:SP-720UZ",		  0x07b4, 0x012f, 0},
 	{"Olympus:E-PL5",		  0x07b4, 0x012f, 0},
 	/* Rafał Bryndza <abigor82@gmail.com> */
 	{"Olympus:E-M5",		  0x07b4, 0x012f, 0},
+	/* Richard Wonka <richard.wonka@gmail.com> */
+	{"Olympus:E-M5 Mark II",	  0x07b4, 0x0130, 0},
 
 	/* IRC report */
 	{"Casio:EX-Z120",                 0x07cf, 0x1042, 0},
@@ -1827,6 +1835,8 @@ static struct {
 	{"Fuji:FinePix F40fd",			0x04cb, 0x01c5, 0},
 	/* http://sourceforge.net/tracker/index.php?func=detail&aid=1800289&group_id=8874&atid=358874 */
 	{"Fuji:FinePix A820",			0x04cb, 0x01c6, 0},
+	/* Louis Byrne <louisbyrneca@hotmail.com> */
+	{"Fuji:FinePix A610",			0x04cb, 0x01d0, 0},
 	/* g4@catking.net */
 	{"Fuji:FinePix A800",			0x04cb, 0x01d2, 0},
 	/* Gerhard Schmidt <gerd@dg4fac.de> */
@@ -7302,7 +7312,10 @@ camera_init (Camera *camera, GPContext *context)
 	camera->functions->capture_preview = camera_capture_preview;
 	camera->functions->summary = camera_summary;
 	camera->functions->get_config = camera_get_config;
+	camera->functions->get_single_config = camera_get_single_config;
+	camera->functions->set_single_config = camera_set_single_config;
 	camera->functions->set_config = camera_set_config;
+	camera->functions->list_config = camera_list_config;
 	camera->functions->wait_for_event = camera_wait_for_event;
 
 	/* We need some data that we pass around */

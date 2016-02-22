@@ -53,9 +53,9 @@ static char *st2205_malloc_page_aligned(int size)
 	
 	fd = open ("/dev/zero", O_RDWR);
 	aligned = mmap (0, size, PROT_READ|PROT_WRITE,MAP_PRIVATE, fd, 0);
+	close (fd);
 	if (aligned == MAP_FAILED)
 		return NULL;
-
 	return aligned;
 #else
 	/* hope for the best */
@@ -217,15 +217,21 @@ st2205_detect_mem_size(Camera *camera)
 	}
 
 	ret = st2205_read_block(camera, 0, buf0);
-	if (ret)
+	if (ret) {
+		st2205_free_page_aligned(buf0, ST2205_BLOCK_SIZE);
+		st2205_free_page_aligned(buf1, ST2205_BLOCK_SIZE);
 		return ret;
+	}
 
 	for (i = 0; i < 3; i++) {
 		ret = st2205_read_block(camera,
 					(524288 / ST2205_BLOCK_SIZE) << i,
 					buf1);
-		if (ret)
+		if (ret) {
+			st2205_free_page_aligned(buf0, ST2205_BLOCK_SIZE);
+			st2205_free_page_aligned(buf1, ST2205_BLOCK_SIZE);
 			return ret;
+		}
 		if (memcmp(buf0, buf1, ST2205_BLOCK_SIZE) == 0)
 			break;
 	}

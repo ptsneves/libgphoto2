@@ -195,7 +195,7 @@ gp_port_library_list (GPPortInfoList *list)
 	gp_port_info_set_type (info, GP_PORT_USB);
 	gp_port_info_set_name (info, "");
 	gp_port_info_set_path (info, "^usb:");
-	C_GP (gp_port_info_list_append (list, info));
+	gp_port_info_list_append (list, info); /* do not check return value, it might be -1 */
 
 	nrofdevs = libusb_get_device_list (ctx, &devs);
 	C_MEM (descs = calloc (nrofdevs, sizeof(descs[0])));
@@ -303,6 +303,11 @@ gp_port_library_list (GPPortInfoList *list)
 		gp_port_info_set_path (info, path);
 		C_GP (gp_port_info_list_append (list, info));
 	}
+
+	libusb_free_device_list (devs, 1);
+	libusb_exit (ctx); /* should free all stuff above */
+	free (descs);
+
 	/* This will only be added if no other device was ever added.
 	 * Users doing "usb:" usage will enter the regular expression matcher case. */
 	if (nrofdevices == 0) {
@@ -312,9 +317,6 @@ gp_port_library_list (GPPortInfoList *list)
 		gp_port_info_set_path (info, "usb:");
 		C_GP (gp_port_info_list_append (list, info));
 	}
-	libusb_free_device_list (devs, 1);
-	libusb_exit (ctx); /* should free all stuff above */
-	free (descs);
 	return (GP_OK);
 }
 

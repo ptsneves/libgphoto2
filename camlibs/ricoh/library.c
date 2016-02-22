@@ -392,8 +392,8 @@ static struct {
 	unsigned int __i;						\
 									\
 	CR (gp_widget_new (GP_WIDGET_RADIO, _(Name), &__w));		\
-	CR (gp_widget_set_name (__w, (Name)));				\
-	CR (gp_widget_append ((s), __w));				\
+	CRW (gp_widget_set_name (__w, (Name)), __w);			\
+	CRW (gp_widget_append ((s), __w), __w);				\
 	CR (ricoh_get_##n ((ca), (co), &__v));				\
 	for (__i = 0; __i < N_ELEMENTS (ricoh_##n##s); __i++) {		\
 		CR (gp_widget_add_choice (__w, _(ricoh_##n##s[__i].name)));	\
@@ -432,13 +432,13 @@ camera_get_config (Camera *c, CameraWidget **window, GPContext *co)
 
 	/* General settings */
 	CR (gp_widget_new (GP_WIDGET_SECTION, _("General"), &s));
-	CR (gp_widget_append (*window, s));
+	CRW (gp_widget_append (*window, s), s);
 
 	/* Copyright */
 	CR (gp_widget_new (GP_WIDGET_TEXT, _("Copyright"), &w));
-	CR (gp_widget_set_name (w, "copyright"));
-	CR (gp_widget_set_info (w, _("Copyright (max. 20 characters)")));
-	CR (gp_widget_append (s, w));
+	CRW (gp_widget_set_name (w, "copyright"), w);
+	CRW (gp_widget_set_info (w, _("Copyright (max. 20 characters)")), w);
+	CRW (gp_widget_append (s, w), w);
 	CR (ricoh_get_copyright (c, co, &copyright));
 	CR (gp_widget_set_value (w, (void *) copyright));
 
