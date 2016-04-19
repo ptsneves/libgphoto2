@@ -3576,7 +3576,7 @@ camera_sony_capture (Camera *camera, CameraCaptureType type, CameraFilePath *pat
 	int		dual = 0;
 	PTPDevicePropDesc	dpd;
 	struct timeval	event_start;
-
+	long int timeout_value;
 	propval.u16 = 1;
 	C_PTP (ptp_sony_setdevicecontrolvalueb (params, 0xD2C1, &propval, PTP_DTC_UINT16));
 
@@ -3594,13 +3594,14 @@ camera_sony_capture (Camera *camera, CameraCaptureType type, CameraFilePath *pat
 
 	propval.u16 = 2;
 	C_PTP (ptp_sony_setdevicecontrolvalueb (params, PTP_DPC_SONY_StillImage, &propval, PTP_DTC_UINT16));
-
+	timeout_value = 50;
 	event_start = time_now();
 	do {
 		C_PTP (ptp_check_event (params));
 		if (ptp_get_one_event(params, &event)) {
 			GP_LOG_D ("during event.code=%04x Param1=%08x", event.Code, event.Param1);
 			if (event.Code == PTP_EC_Sony_ObjectAdded) {
+				timeout_value = 5000;
 				newobject = event.Param1;
 				if (dual)
 					ptp_add_event (params, &event);
@@ -3608,7 +3609,7 @@ camera_sony_capture (Camera *camera, CameraCaptureType type, CameraFilePath *pat
 			}
 		}
 	/* 30 seconds are maximum capture time currently, so use 30 seconds + 5 seconds image saving at most. */
-	} while (time_since (event_start) < 35000);
+	} while (time_since (event_start) < timeout_value);
 
 	propval.u16 = 1;
 	C_PTP (ptp_sony_setdevicecontrolvalueb (params, 0xD2C2, &propval, PTP_DTC_UINT16));
