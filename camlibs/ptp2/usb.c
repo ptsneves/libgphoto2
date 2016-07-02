@@ -241,7 +241,7 @@ retry:
 	return PTP_ERROR_IO;
 }
 
-#define READLEN 64*1024 /* read blob size */
+#define READLEN 2048*1024 /* read blob size */
 
 uint16_t
 ptp_usb_getdata (PTPParams* params, PTPContainer* ptp, PTPDataHandler *handler)
